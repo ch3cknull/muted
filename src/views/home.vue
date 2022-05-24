@@ -12,10 +12,9 @@
 </template>
 
 <script lang="ts" setup>
-  import HistoryItem from '../components/historyItem.vue'
-
-  import { IResponse } from '@/types'
-  import { getData } from '../http/api'
+  import HistoryItem from '@/components/historyItem.vue'
+  import type { IResponse, User } from '@/types'
+  import { getData } from '@/http/api'
 
   const { users, count } = toRefs(
     reactive<IResponse['data']>({
@@ -29,15 +28,13 @@
     count.value = res.count
   }
   getValue()
-  let websocket: WebSocket
-  function connect() {
-    websocket = new WebSocket('ws://43.128.42.48:2800/ban/ws')
-    //接收服务端消息
-    websocket.onmessage = (res: { data: string }) => {
-      users.value.unshift(JSON.parse(res.data))
-    }
-  }
-  connect()
+
+  useWebSocket('ws://43.128.42.48:2800/ban/ws', {
+    onMessage(_, event) {
+      const data = JSON.parse(event.data) as User
+      users.value = [data, ...users.value]
+    },
+  })
 </script>
 
 <style lang="less">

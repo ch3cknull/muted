@@ -21,9 +21,7 @@
       })
     }
 
-    return arr.map((s) => {
-      return `<div>${replace(s)}</div>`
-    })
+    return arr.map((s) => `<div>${replace(s)}</div>`)
   })
 </script>
 
